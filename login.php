@@ -7,11 +7,12 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:;");
 
 // Secure session configuration
+// Secure session configuration (Universal Port & Proxy Fix)
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => $_SERVER['HTTP_HOST'],
-    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+    'domain' => null, // FIXED: Passing null forces the browser to handle domains automatically, fixing localhost port errors
+    'secure' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'), // FIXED: Detects Railway/Cloud proxy SSL
     'httponly' => true,
     'samesite' => 'Strict'
 ]);
