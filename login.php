@@ -6,7 +6,6 @@ header("X-XSS-Protection: 1; mode=block");
 header("Referrer-Policy: strict-origin-when-cross-origin");
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:;");
 
-// Secure session configuration
 // Secure session configuration (Universal Port & Proxy Fix)
 session_set_cookie_params([
     'lifetime' => 0,
@@ -18,8 +17,9 @@ session_set_cookie_params([
 ]);
 session_start();
 
-// Automatic Routing Guard
-if (isset($_SESSION['user_role'])) {
+// FIXED ROUTING GUARD: Only redirect away if trying to VIEW the login page (GET request).
+// Do NOT block incoming authentication form submissions (POST requests).
+if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_SESSION['user_role'])) {
     header("Location: index.html");
     exit;
 }
@@ -53,15 +53,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($userRow && password_verify($password, $userRow['password_hash'])) {
             session_regenerate_id(true); 
 
-            // OTP REMOVED: Instantly elevate user to active authenticated session
-            // Inside your password verification success block:
-$_SESSION['user_id']   = $userRow['id'];
-$_SESSION['username']  = $userRow['username'];
-$_SESSION['user_role'] = $userRow['role']; // Make sure this is user_role to match check_session.php
+            // Assign variables directly and ensure case format matches auth-guard requirements
+            $_SESSION['user_id']   = $userRow['id'];
+            $_SESSION['username']  = $userRow['username'];
+            $_SESSION['user_role'] = strtolower(trim($userRow['role'])); 
+            $_SESSION['role']      = strtolower(trim($userRow['role'])); 
 
-// Redirect directly to your main frontend page
-header("Location: index.html");
-exit;
+            // Clear out old leftover OTP cache attributes from older configurations if present
+            unset($_SESSION['temp_user_id'], $_SESSION['temp_username'], $_SESSION['temp_role']);
+
+            // Redirect directly to your main frontend page
+            header("Location: index.html");
+            exit;
         } else {
             header("Location: login.html?error=failed");
             exit;
