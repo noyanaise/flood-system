@@ -26,10 +26,10 @@ if (isset($_SESSION['user_role'])) {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
     // Dynamic Environment Variables for Railway Cloud / Local XAMPP fallback
-    $host = getenv('MYSQLHOST') ?: 'localhost';
-    $db   = getenv('MYSQLDATABASE') ?: 'flood_system'; 
+    $host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+    $db   = getenv('MYSQLDATABASE') ?: 'railway'; 
     $user = getenv('MYSQLUSER') ?: 'root';
-    $pass = getenv('MYSQLPASSWORD') ?: '';
+    $pass = getenv('MYSQLPASSWORD') ?: 'KKnlRsdVlmoSIGLSsKzsFKvCgPmxdYrx';
     $port = getenv('MYSQLPORT') ?: '3306';
     
     $dsn  = "mysql:host=$host;dbname=$db;port=$port;charset=utf8mb4";
