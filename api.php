@@ -35,10 +35,10 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 
-$host = getenv('MYSQLHOST') ?: 'localhost';
-$db   = getenv('MYSQLDATABASE') ?: 'flood_system'; 
+$host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db   = getenv('MYSQLDATABASE') ?: 'railway'; 
 $user = getenv('MYSQLUSER') ?: 'root';
-$pass = getenv('MYSQLPASSWORD') ?: '';
+$pass = getenv('MYSQLPASSWORD') ?: 'KKnlRsdVlmoSIGLSsKzsFKvCgPmxdYrx';
 $port = getenv('MYSQLPORT') ?: '3306';
 
 $dsn  = "mysql:host=$host;dbname=$db;port=$port;charset=utf8mb4";
