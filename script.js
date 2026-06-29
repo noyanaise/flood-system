@@ -994,3 +994,18 @@ window.localToggleSerialConnection = window.toggleSerialLink;
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => updateStatusBarHighlights("AUTO"), 600);
 });
+function handleSignOut() {
+  // Using your existing custom confirmation component if available
+  if (typeof customConfirm === "function") {
+    customConfirm("Sign Out", "Are you sure you want to terminate this secure session?", (confirmed) => {
+      if (confirmed) {
+        window.location.href = "logout.php";
+      }
+    });
+  } else {
+    // Standard fallback if custom modal is not present
+    if (confirm("Are you sure you want to sign out?")) {
+      window.location.href = "logout.php";
+    }
+  }
+}
