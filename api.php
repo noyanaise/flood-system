@@ -52,6 +52,7 @@ try {
     echo json_encode(["error" => "Database connection breakdown: " . $e->getMessage()]);
     exit;
 }
+// Delete the second duplicate try/catch block right below this!
 try {
     $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 } catch (PDOException $e) {
