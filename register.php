@@ -24,17 +24,19 @@ function validate_input($data, $max_length = 255) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $host = 'localhost';
-    $db   = 'flood_system'; 
-    $user = 'root';
-    $pass = '';
-    $dsn  = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+    // Dynamic Environment Variables for Railway Cloud / Local XAMPP fallback
+    $host = getenv('MYSQLHOST') ?: 'localhost';
+    $db   = getenv('MYSQLDATABASE') ?: 'flood_system'; 
+    $user = getenv('MYSQLUSER') ?: 'root';
+    $pass = getenv('MYSQLPASSWORD') ?: '';
+    $port = getenv('MYSQLPORT') ?: '3306';
+    
+    $dsn  = "mysql:host=$host;dbname=$db;port=$port;charset=utf8mb4";
 
-    $username = validate_input($_POST['username'] ?? '');
+    $username = trim($_POST['username'] ?? '');
     $email    = trim($_POST['email'] ?? ''); 
     $password = trim($_POST['password'] ?? '');
     
-    // HARDCODED FIX: Overrides any client parameters to secure user level assignment
     $role     = 'user'; 
 
     if (!$username || empty($password)) {
@@ -55,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
-        $checkStmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ? LIMIT 1");
+        $checkStmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ? LIMIT 1\");
         $checkStmt->execute([$username, $email]);
         if ($checkStmt->fetch()) {
             header("Location: register.html?error=exists");
@@ -74,8 +76,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header("Location: register.html?error=db_fault");
         exit;
     }
-} else {
-    header("Location: register.html");
-    exit;
 }
 ?>
