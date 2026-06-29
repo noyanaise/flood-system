@@ -54,13 +54,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             session_regenerate_id(true); 
 
             // OTP REMOVED: Instantly elevate user to active authenticated session
-            $_SESSION['user_id']   = $userRow['id'];
-            $_SESSION['username']  = $userRow['username'];
-            $_SESSION['user_role'] = $userRow['role'];
+            // Inside your password verification success block:
+$_SESSION['user_id']   = $userRow['id'];
+$_SESSION['username']  = $userRow['username'];
+$_SESSION['user_role'] = $userRow['role']; // Make sure this is user_role to match check_session.php
 
-            // Route directly to main system control matrix
-            header("Location: index.html");
-            exit;
+// Redirect directly to your main frontend page
+header("Location: index.html");
+exit;
         } else {
             header("Location: login.html?error=failed");
             exit;
