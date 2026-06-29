@@ -31,14 +31,27 @@ header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 
-// Database Configuration
-$host = 'localhost';
-$db   = 'flood_system'; 
-$user = 'root';
-$pass = ''; 
-$charset = 'utf8mb4';
+// ... YOUR NORMAL DATABASE CONNECTION GOES BELOW THIS LINE ...
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$db   = getenv('MYSQLDATABASE') ?: 'flood_system'; 
+$user = getenv('MYSQLUSER') ?: 'root';
+$pass = getenv('MYSQLPASSWORD') ?: '';
+$port = getenv('MYSQLPORT') ?: '3306';
+
+$dsn  = "mysql:host=$host;dbname=$db;port=$port;charset=utf8mb4";
+
+try {
+    $pdo = new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
+} catch (PDOException $e) {
+    echo json_encode(["error" => "Database connection breakdown: " . $e->getMessage()]);
+    exit;
+}
 try {
     $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 } catch (PDOException $e) {
